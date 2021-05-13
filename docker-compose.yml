@@ -22,7 +22,7 @@ services:
       NGROK_AGENT_URL: ${NGROK_AGENT_URL}
       AUTH_URL: ${AUTH_URL}
     networks:
-       - oidc
+       - oidc-server-db
     ports:
       - 5000:8080
     depends_on:
@@ -52,22 +52,18 @@ services:
     command: postgres -c listen_addresses='*'
     env_file:
       - .env
-    environment:
-      POSTGRESQL_USER: ${OIDC_POSTGRESQL_USER}
-      POSTGRESQL_PASSWORD: ${OIDC_POSTGRESQL_PASSWORD}
-      POSTGRESQL_DATABASE: ${OIDC_POSTGRESQL_DATABASE}
     volumes:
       - ./resources/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - alice-domain
+      - oidc
     tty: true
   accpy-oidc-agent:
     image: bcgovimages/aries-cloudagent:py36-1.15-1_0.6.0
     env_file:
       - .env
     ports:
-      - ${AGENT_ADMIN_PORT}:${AGENT_ADMIN_PORT}
-      - ${AGENT_HTTP_PORT}:${AGENT_HTTP_PORT}
+      - 7021:3021
+      - 7020:3020
     networks:
       - oidc
 
