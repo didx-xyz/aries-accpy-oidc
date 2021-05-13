@@ -36,33 +36,35 @@ class OIDCProofRequest(Base):
 
     __tablename__ = 'oidc_proof_request'
 
-    id = Column(String(100), primary_key=True)
-    # The oidc scope
-    oidc_scope_identifier = Column(String(100))
+    # The oidc scope allows a relying party to specify the proof request the OP should challenge the user with
+    oidc_scope = Column(String(100), primary_key=True)
+
+    # Attribute within the proof request that identifies the subject responding the to authentication challenge
+    subject_identifier = Column(String(100))
     proof_request = Column(JSON)
 
-    def get_id(self):
+    def get_oidc_scope(self):
         '''Fetch oidc proof request identifier'''
-        return self.id
+        return self.oidc_scope
 
     def __str__(self):
         return f"{self.id}"
 
     def to_json(self):
         proof_request = {
-            "name": self.configuration.get("name", ""),
-            "version": self.configuration.get("version", ""),
+            "name": self.proof_request.get("name", ""),
+            "version": self.proof_request.get("version", ""),
             "requested_attributes": {},
             "requested_predicates": {},
         }
 
-        for attr in self.configuration.get("requested_attributes", []):
+        for attr in self.proof_request.get("requested_attributes", []):
             label = attr.get("label", str(uuid.uuid4()))
             if label in proof_request.get("requested_attributes", {}).keys():
                 label = disambiguate_referent(label)
             proof_request["requested_attributes"].update({label: attr})
 
-        for attr in self.configuration.get("requested_predicates", []):
+        for attr in self.proof_request.get("requested_predicates", []):
             label = attr.get("label", str(uuid.uuid4()))
             if label in proof_request.get("requested_predicates", {}).keys():
                 label = disambiguate_referent(label)
