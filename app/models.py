@@ -10,30 +10,46 @@ from sqlalchemy.dialects.sqlite import JSON, BOOLEAN, DATETIME
 #     OAuth2AuthorizationCodeMixin
 # )
 from app.database import Base, db
+from app.utils import disambiguate_referent
 
 
 import uuid
 import os
 
+class User(Base):  # pylint: disable=R0903
+    '''User class example'''
 
-class PresentationConfiguration(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    uuid = Column(String(100), unique=True)
+
+    def get_id(self):
+        '''Fetch user identifier'''
+        return self.id
+
+
+# OIDC Authentication Challenge
+# Template for a proof request that will be sent as a challenge to authenticating users
+class OIDCProofRequest(Base):
     '''Presentation Configuration class example'''
 
-    __tablename__ = 'presentation_configs'
+    __tablename__ = 'oidc_proof_request'
 
     id = Column(String(100), primary_key=True)
-    subject_identifier = Column(String(100))
-    configuration = Column(JSON)
+    # The oidc scope
+    oidc_scope_identifier = Column(String(100))
+    proof_request = Column(JSON)
 
-    def get_presentation_id(self):
-        '''Fetch presentation config identifier'''
+    def get_id(self):
+        '''Fetch oidc proof request identifier'''
         return self.id
 
     def __str__(self):
         return f"{self.id}"
 
     def to_json(self):
-        presentation_request = {
+        proof_request = {
             "name": self.configuration.get("name", ""),
             "version": self.configuration.get("version", ""),
             "requested_attributes": {},
@@ -42,15 +58,15 @@ class PresentationConfiguration(Base):
 
         for attr in self.configuration.get("requested_attributes", []):
             label = attr.get("label", str(uuid.uuid4()))
-            if label in presentation_request.get("requested_attributes", {}).keys():
+            if label in proof_request.get("requested_attributes", {}).keys():
                 label = disambiguate_referent(label)
-            presentation_request["requested_attributes"].update({label: attr})
+            proof_request["requested_attributes"].update({label: attr})
 
         for attr in self.configuration.get("requested_predicates", []):
             label = attr.get("label", str(uuid.uuid4()))
-            if label in presentation_request.get("requested_predicates", {}).keys():
+            if label in proof_request.get("requested_predicates", {}).keys():
                 label = disambiguate_referent(label)
 
-            presentation_request["requested_predicates"].update({label: attr})
+            proof_request["requested_predicates"].update({label: attr})
 
-        return {"proof_request": presentation_request}
+        return {"proof_request": proof_request}
