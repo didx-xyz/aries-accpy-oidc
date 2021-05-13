@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Response, Form, status
 import logging
 from ..database import db
-from ..models import PresentationConfigurations
+from ..models import OIDCProofRequest
 
 router = APIRouter()
 
@@ -15,9 +15,9 @@ LOGGER = logging.getLogger(__name__)
     tags=["Verifiable Credential Presentation Configuration"],
 )
 async def vc_configs(request: Request, response: Response):
-    presentation_configuration = db.query(PresentationConfigurations).all()
-    logger.info("presentation_configuration:\n", presentation_configuration)
-    return presentation_configuration
+    oidc_proof_request = db.query(OIDCProofRequest).all()
+    LOGGER.info("OIDC Proof Requests Currently Configured:\n", oidc_proof_request)
+    return oidc_proof_request
 
 
 @router.post(
@@ -26,11 +26,16 @@ async def vc_configs(request: Request, response: Response):
 async def vc_configs(
     request: Request,
     response: Response,
-    id: str = Form(...),
-    subject_identifier: str = Form(...),
-    configuration: str = Form(...),
+    oidc_scope: str,
+    subject_identifier: str,
+    proof_request: dict,
 ):
-    pass
+    oidc_proof_request = OIDCProofRequest(oidc_scope=oidc_scope, subject_identifier=subject_identifier,
+                                                     proof_request=proof_request)
+    LOGGER.info('OIDC Proof Request Added ', oidc_proof_request)
+    db.add(oidc_proof_request)
+    db.commit()
+    return oidc_proof_request
 
 
 @router.put(
