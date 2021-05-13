@@ -1,6 +1,12 @@
 from fastapi import APIRouter, HTTPException
+import logging
+from ..database import db
+from ..models import PresentationConfigurations
 
 router = APIRouter()
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 @router.get(
@@ -9,7 +15,9 @@ router = APIRouter()
     tags=["Verifiable Credential Presentation Configuration"],
 )
 async def vc_configs(request: Request, response: Response):
-    pass
+    presentation_configuration = db.query(PresentationConfigurations).all()
+    logger.info("presentation_configuration:\n", presentation_configuration)
+    return presentation_configuration
 
 
 @router.post(
