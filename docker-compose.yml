@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     networks:
       - oidc-server-db
-  oidc-fastapi-sever:
+  oidc-fastapi-server:
     build: .
     environment:
       OIDC_DB_USER: ${POSTGRESQL_USER}
@@ -30,7 +30,7 @@ services:
       NGROK_AGENT_URL: ${NGROK_AGENT_URL}
       AUTH_URL: ${AUTH_URL}
     networks:
-       - oidc-server-db
+      - oidc-server-db
     ports:
       - 5000:8080
     depends_on:
