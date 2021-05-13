@@ -45,11 +45,23 @@ async def vc_configs(
 async def vc_configs(
     request: Request,
     response: Response,
-    id: str = Form(...),
-    subject_identifier: str = Form(...),
-    configuration: str = Form(...),
+    oidc_scope: str,
+    subject_identifier: str,
+    proof_request: str,
 ):
-    pass
+    oidc_proof_request_record = db.query(OIDCProofRequest).filter(OIDCProofRequest.oidc_scope == oidc_scope)
+
+    if not oidc_proof_request_record.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"OIDC Proof Request with scope {oidc_scope} not found")
+
+    updated_oidc_pr = OIDCProofRequest(oidc_scope=oidc_scope, subject_identifier=subject_identifier,
+                                                     proof_request=proof_request)
+    ## TODO revisit log
+    LOGGER.info('OIDC Proof Request Updating ', request.body().__str__(), request.headers, request.query_params)
+    oidc_proof_request_record.update(updated_oidc_pr)
+    db.commit()
+    return status.HTTP_200_OK
 
 
 @router.delete(
