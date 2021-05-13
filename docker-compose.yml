@@ -1,0 +1,78 @@
+version: "3.1"
+
+services:
+  oidc-fastapi-sever:
+    build: .
+    environment:
+      OIDC_DB_USER: ${POSTGRESQL_USER}
+      OIDC_DB_PASSWORD: ${POSTGRESQL_PASSWORD}
+      OIDC_DB_NAME: ${POSTGRESQL_DATABASE}
+      OIDC_DB_PORT: 5432
+      ACAPY_ADMIN_PORT: ${AGENT_ADMIN_PORT}
+      ACAPY_TRANSPORT_PORT: ${AGENT_HTTP_PORT}
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      SECRET_KEY: ${SECRET_KEY}
+      SITE_URL: ${SITE_URL}
+      DEBUG: ${DEBUG}
+      OIDC_RP_PROVIDER_ENDPOINT: ${OIDC_RP_PROVIDER_ENDPOINT}
+      OIDC_RP_CLIENT_ID: ${OIDC_RP_CLIENT_ID}
+      OIDC_RP_CLIENT_SECRET: ${OIDC_RP_CLIENT_SECRET}
+      OIDC_RP_SCOPES: ${OIDC_RP_SCOPES}
+      VC_AUTHN_PRES_REQ_CONF_ID: ${VC_AUTHN_PRES_REQ_CONF_ID}
+      NGROK_AGENT_URL: ${NGROK_AGENT_URL}
+      AUTH_URL: ${AUTH_URL}
+    networks:
+       - oidc
+    ports:
+      - 5000:8080
+    depends_on:
+      - oidc-db
+      - aca-py
+    volumes:
+      - ./:/code
+      
+  oidc-server-db:
+    image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
+    env_file:
+      - .env
+    environment:
+      POSTGRESQL_USER: ${OIDC_POSTGRESQL_USER}
+      POSTGRESQL_PASSWORD: ${OIDC_POSTGRESQL_PASSWORD}
+      POSTGRESQL_DATABASE: ${OIDC_POSTGRESQL_DATABASE}
+    ports:
+      - ${EXPOSED_DATABASE_SERVICE_PORT}:5432
+    volumes:
+      - db-volume:/var/lib/pgsql/data
+    networks:
+      - oidc
+      
+  accpy-oidc-wallet-db:
+    image: postgres:11
+    container_name: accpy-oidc-wallet-db
+    command: postgres -c listen_addresses='*'
+    env_file:
+      - .env
+    environment:
+      POSTGRESQL_USER: ${OIDC_POSTGRESQL_USER}
+      POSTGRESQL_PASSWORD: ${OIDC_POSTGRESQL_PASSWORD}
+      POSTGRESQL_DATABASE: ${OIDC_POSTGRESQL_DATABASE}
+    volumes:
+      - ./resources/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - alice-domain
+    tty: true
+  accpy-oidc-agent:
+    image: bcgovimages/aries-cloudagent:py36-1.15-1_0.6.0
+    env_file:
+      - .env
+    ports:
+      - ${AGENT_ADMIN_PORT}:${AGENT_ADMIN_PORT}
+      - ${AGENT_HTTP_PORT}:${AGENT_HTTP_PORT}
+    networks:
+      - oidc
+
+volumes:
+  db-volume:
+
+networks:
+  oidc:
