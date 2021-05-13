@@ -11,7 +11,7 @@ services:
       - oidc-server-db
       - accpy-oidc-agent
     volumes:
-      - ./app:/app
+      - ./oidc_server/app:/app/app
     networks:
       - oidc
 #  oidc-fastapi-server:

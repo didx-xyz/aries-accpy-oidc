@@ -1,20 +1,18 @@
 '''OIDC server example'''
 # import datetime
-import time
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.sqlite import JSON, BOOLEAN, DATETIME
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.dialects.sqlite import JSON
 # from authlib.integrations.sqla_oauth2 import (
 #     OAuth2ClientMixin,
 #     OAuth2TokenMixin,
 #     OAuth2AuthorizationCodeMixin
 # )
-from app.database import Base, db
-from app.utils import disambiguate_referent
+from oidc_server.app import Base
+from oidc_server.app import disambiguate_referent
 
 
 import uuid
-import os
+
 
 class User(Base):  # pylint: disable=R0903
     '''User class example'''

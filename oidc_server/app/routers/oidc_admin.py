@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, Response, Form, status
 import logging
-from app.database import db
-from app.models import OIDCProofRequest
+from ..database import db
+from ..models import OIDCProofRequest
 
 router = APIRouter()
 
