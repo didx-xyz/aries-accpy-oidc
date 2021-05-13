@@ -1,43 +1,48 @@
 version: "3.1"
 
 services:
-  web:
+  oidc-fastapi-server:
     build: 
       context: .
       dockerfile: ./dockerfiles/Dockerfile.acc-oidc-fastapi
     ports:
       - "8000:8000"
-    networks:
-      - oidc-server-db
-  oidc-fastapi-server:
-    build: .
-    environment:
-      OIDC_DB_USER: OIDC_DB_USER
-      OIDC_DB_PASSWORD: OIDC_PASSWORD
-      OIDC_DB_NAME: OIDC
-      OIDC_DB_PORT: 5432
-      ACAPY_ADMIN_PORT: 3021
-      ACAPY_TRANSPORT_PORT: 3020
-#      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
-      SECRET_KEY: ${SECRET_KEY}
-      SITE_URL: ${SITE_URL}
-      DEBUG: ${DEBUG}
-      OIDC_RP_PROVIDER_ENDPOINT: ${OIDC_RP_PROVIDER_ENDPOINT}
-      OIDC_RP_CLIENT_ID: ${OIDC_RP_CLIENT_ID}
-      OIDC_RP_CLIENT_SECRET: ${OIDC_RP_CLIENT_SECRET}
-      OIDC_RP_SCOPES: ${OIDC_RP_SCOPES}
-      VC_AUTHN_PRES_REQ_CONF_ID: ${VC_AUTHN_PRES_REQ_CONF_ID}
-      NGROK_AGENT_URL: ${NGROK_AGENT_URL}
-      AUTH_URL: ${AUTH_URL}
-    networks:
-      - oidc-server-db
-    ports:
-      - 5000:8080
     depends_on:
-      - oidc-db
-      - aca-py
+      - oidc-server-db
+      - accpy-oidc-agent
     volumes:
-      - ./:/code
+      - ./app:/app
+    networks:
+      - oidc
+#  oidc-fastapi-server:
+#    build: .
+#    environment:
+#      OIDC_DB_USER: OIDC_DB_USER
+#      OIDC_DB_PASSWORD: OIDC_PASSWORD
+#      OIDC_DB_NAME: OIDC
+#      OIDC_DB_PORT: 5432
+#      ACAPY_ADMIN_PORT: 3021
+#      ACAPY_TRANSPORT_PORT: 3020
+##      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+##      SECRET_KEY: ${SECRET_KEY}
+##      SITE_URL: ${SITE_URL}
+##      DEBUG: ${DEBUG}
+##      OIDC_RP_PROVIDER_ENDPOINT: ${OIDC_RP_PROVIDER_ENDPOINT}
+##      OIDC_RP_CLIENT_ID: ${OIDC_RP_CLIENT_ID}
+##      OIDC_RP_CLIENT_SECRET: ${OIDC_RP_CLIENT_SECRET}
+##      OIDC_RP_SCOPES: ${OIDC_RP_SCOPES}
+##      VC_AUTHN_PRES_REQ_CONF_ID: ${VC_AUTHN_PRES_REQ_CONF_ID}
+##      NGROK_AGENT_URL: ${NGROK_AGENT_URL}
+##      AUTH_URL: ${AUTH_URL}
+#    networks:
+#      - oidc-server-db
+#    ports:
+#      - 5000:8080
+#    depends_on:
+#      - oidc-server-db
+#      - accpy-oidc-agent
+#    volumes:
+#      - ./:/code
       
   oidc-server-db:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
