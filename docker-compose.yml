@@ -12,13 +12,13 @@ services:
   oidc-fastapi-sever:
     build: .
     environment:
-      OIDC_DB_USER: ${POSTGRESQL_USER}
-      OIDC_DB_PASSWORD: ${POSTGRESQL_PASSWORD}
-      OIDC_DB_NAME: ${POSTGRESQL_DATABASE}
+      OIDC_DB_USER: OIDC_DB_USER
+      OIDC_DB_PASSWORD: OIDC_PASSWORD
+      OIDC_DB_NAME: OIDC
       OIDC_DB_PORT: 5432
-      ACAPY_ADMIN_PORT: ${AGENT_ADMIN_PORT}
-      ACAPY_TRANSPORT_PORT: ${AGENT_HTTP_PORT}
-      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+      ACAPY_ADMIN_PORT: 3021
+      ACAPY_TRANSPORT_PORT: 3020
+#      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
       SECRET_KEY: ${SECRET_KEY}
       SITE_URL: ${SITE_URL}
       DEBUG: ${DEBUG}
@@ -41,14 +41,12 @@ services:
       
   oidc-server-db:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
-    env_file:
-      - .env
     environment:
-      POSTGRESQL_USER: ${OIDC_POSTGRESQL_USER}
-      POSTGRESQL_PASSWORD: ${OIDC_POSTGRESQL_PASSWORD}
-      POSTGRESQL_DATABASE: ${OIDC_POSTGRESQL_DATABASE}
+      POSTGRESQL_USER: OIDC_DB_USER
+      POSTGRESQL_PASSWORD: OIDC_PASSWORD
+      POSTGRESQL_DATABASE: OIDC
     ports:
-      - ${EXPOSED_DATABASE_SERVICE_PORT}:5432
+      - 5433:5432
     volumes:
       - db-volume:/var/lib/pgsql/data
     networks:
@@ -61,6 +59,7 @@ services:
     env_file:
       - .env
     volumes:
+      - db-volume:/var/lib/pgsql/data
       - ./resources/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - oidc

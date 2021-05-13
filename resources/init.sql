@@ -1,4 +1,7 @@
 -- We could also handle this the with storage plugin itself, but sense this only needs to get run once the very first time using separate sql statements
+
+
+
 CREATE TABLE IF NOT EXISTS metadata (
     wallet_id VARCHAR(64) NOT NULL,
     value BYTEA NOT NULL,
