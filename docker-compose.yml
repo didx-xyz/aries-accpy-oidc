@@ -65,7 +65,17 @@ services:
     networks:
       - oidc
     tty: true
+  ngrok-accpy-oidc:
+    image: wernight/ngrok
+    env_file:
+      - .env
+    command: ngrok http accpy-oidc-agent:3020 --log stdout
+    networks:
+      - oidc
   accpy-oidc-agent:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.agent
     image: bcgovimages/aries-cloudagent:py36-1.15-1_0.6.0
     env_file:
       - .env
