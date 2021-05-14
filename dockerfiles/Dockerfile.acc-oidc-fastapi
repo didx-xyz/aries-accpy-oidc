@@ -4,7 +4,7 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 
 WORKDIR /app
 
-COPY oidc_server /app
+COPY oidc_server/ /app
 
 RUN cd /app && pip install -r requirements.txt
 

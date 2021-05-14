@@ -7,8 +7,8 @@ from sqlalchemy.dialects.sqlite import JSON
 #     OAuth2TokenMixin,
 #     OAuth2AuthorizationCodeMixin
 # )
-from oidc_server.app import Base
-from oidc_server.app import disambiguate_referent
+from database import Base
+from utils import disambiguate_referent
 
 
 import uuid

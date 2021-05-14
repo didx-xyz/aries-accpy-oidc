@@ -11,7 +11,7 @@ services:
       - oidc-server-db
       - accpy-oidc-agent
     volumes:
-      - ./oidc_server/app:/app/app
+      - ./oidc_server/app:/app
     networks:
       - oidc
 #  oidc-fastapi-server:
@@ -23,27 +23,26 @@ services:
 #      OIDC_DB_PORT: 5432
 #      ACAPY_ADMIN_PORT: 3021
 #      ACAPY_TRANSPORT_PORT: 3020
-##      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
-##      SECRET_KEY: ${SECRET_KEY}
-##      SITE_URL: ${SITE_URL}
-##      DEBUG: ${DEBUG}
-##      OIDC_RP_PROVIDER_ENDPOINT: ${OIDC_RP_PROVIDER_ENDPOINT}
-##      OIDC_RP_CLIENT_ID: ${OIDC_RP_CLIENT_ID}
-##      OIDC_RP_CLIENT_SECRET: ${OIDC_RP_CLIENT_SECRET}
-##      OIDC_RP_SCOPES: ${OIDC_RP_SCOPES}
-##      VC_AUTHN_PRES_REQ_CONF_ID: ${VC_AUTHN_PRES_REQ_CONF_ID}
-##      NGROK_AGENT_URL: ${NGROK_AGENT_URL}
-##      AUTH_URL: ${AUTH_URL}
-#    networks:
-#      - oidc-server-db
-#    ports:
-#      - 5000:8080
-#    depends_on:
-#      - oidc-server-db
-#      - accpy-oidc-agent
-#    volumes:
-#      - ./:/code
-      
+# #      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+# #      SECRET_KEY: ${SECRET_KEY}
+# #      SITE_URL: ${SITE_URL}
+# #      DEBUG: ${DEBUG}
+# #      OIDC_RP_PROVIDER_ENDPOINT: ${OIDC_RP_PROVIDER_ENDPOINT}
+# #      OIDC_RP_CLIENT_ID: ${OIDC_RP_CLIENT_ID}
+# #      OIDC_RP_CLIENT_SECRET: ${OIDC_RP_CLIENT_SECRET}
+# #      OIDC_RP_SCOPES: ${OIDC_RP_SCOPES}
+# #      VC_AUTHN_PRES_REQ_CONF_ID: ${VC_AUTHN_PRES_REQ_CONF_ID}
+# #      NGROK_AGENT_URL: ${NGROK_AGENT_URL}
+# #      AUTH_URL: ${AUTH_URL}
+  #  networks:
+  #    - oidc-server-db
+  #  ports:
+  #    - 5000:8080
+  #  depends_on:
+  #    - oidc-server-db
+  #    - accpy-oidc-agent
+  #  volumes:
+  #    - ./:/code
   oidc-server-db:
     image: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
     environment:
@@ -66,6 +65,8 @@ services:
     volumes:
       - db-volume:/var/lib/pgsql/data
       - ./resources/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5434:5432
     networks:
       - oidc
     tty: true
