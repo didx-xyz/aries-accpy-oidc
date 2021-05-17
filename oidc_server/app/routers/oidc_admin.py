@@ -51,7 +51,7 @@ async def vc_configs(
     response: Response,
     oidc_scope: str,
     subject_identifier: str,
-    proof_request: str,
+    proof_request: dict,
 ):
     oidc_proof_request_record = session.query(OIDCProofRequest).filter(OIDCProofRequest.oidc_scope == oidc_scope)
 

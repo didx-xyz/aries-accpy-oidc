@@ -1,4 +1,10 @@
 from pydantic import BaseModel
 
-class ProofRequest(BaseModel):
 
+class RequestedAttributes(BaseModel):
+
+
+class ProofRequest(BaseModel):
+    name: str
+    version: str
+    requested_attributes: RequestedAttributes
