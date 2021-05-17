@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Request, Response, Form, status
 import logging
 from database import session
 from models import OIDCProofRequest
+from schemas import ProofRequest
 
 router = APIRouter(
     prefix="/oidc/admin/vc-configs",
@@ -32,7 +33,7 @@ async def vc_configs(
     response: Response,
     oidc_scope: str,
     subject_identifier: str,
-    proof_request: dict,
+    proof_request: ProofRequest,
 ):
     oidc_proof_request = OIDCProofRequest(oidc_scope=oidc_scope, subject_identifier=subject_identifier,
                                                      proof_request=proof_request)
