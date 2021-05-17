@@ -17,7 +17,7 @@ import uuid
 class User(Base):  # pylint: disable=R0903
     '''User class example'''
 
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
     uuid = Column(String(100), unique=True)
@@ -30,7 +30,7 @@ class User(Base):  # pylint: disable=R0903
 # OIDC Authentication Challenge
 # Template for a proof request that will be sent as a challenge to authenticating users
 class OIDCProofRequest(Base):
-    '''Presentation Configuration class example'''
+    '''OIDC Proof Request class example'''
 
     __tablename__ = 'oidc_proof_request'
 
