@@ -13,7 +13,6 @@ class NonRevoked(BaseModel):
 class Restriction(BaseModel):
     cred_def_id: str = Field(
         "WgWxqztrNooG92RXvxSTWv:3:CL:20:tag",
-
     )
     issuer_did: str = Field(
         "WgWxqztrNooG92RXvxSTWv"

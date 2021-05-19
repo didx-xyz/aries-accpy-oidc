@@ -5,7 +5,6 @@ from models import OIDCProofRequest
 from schemas import ProofRequest
 from schemas import OIDCProofRequest as OIDCProofRequestModel
 import json
-from sqlalchemy import InvalidRequestError
 
 router = APIRouter(
     prefix="/oidc/admin/vc-configs",
@@ -34,8 +33,6 @@ async def vc_configs(request: Request, response: Response):
     response_model=OIDCProofRequestModel
 )
 async def vc_configs(
-    request: Request,
-    response: Response,
     oidc_scope: str,
     subject_identifier: str,
     proof_request: ProofRequest,
@@ -48,6 +45,7 @@ async def vc_configs(
     LOGGER.info('OIDC Proof Request Added ', oidc_proof_request)
     session.add(oidc_proof_request)
     session.commit()
+    print(oidc_proof_request)
     return oidc_proof_request
 
 
